@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Genius Machado | Journal</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>tailwind.config = { darkMode: 'class', theme: { extend: { colors: { brand: { DEFAULT: '#00E5FF', dark: '#00B8D4' } } } } }</script>
+  <style>
+    body { background-color: #0F172A; color: #E2E8F0; }
+    .glass { background: rgba(30, 41, 59, 0.8); backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.1); }
+    .hero-bg { background-image: url('/static/images/banner.jpg'); background-size: cover; background-position: center; }
+  </style>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="flex flex-col min-h-screen">
+  <header class="fixed w-full z-50 glass">
+    <div class="container mx-auto px-6 py-4 flex justify-between items-center">
+      <a href="/" class="text-xl font-black tracking-tighter text-white">GENIUS<span class="text-brand">MACHADO</span></a>
+      <div class="flex items-center gap-4">
+        {% if user %}
+           <a href="/dashboard" class="bg-brand text-black px-4 py-2 rounded font-bold hover:bg-brand-dark transition">Simulator</a>
+           <a href="/logout" class="text-sm text-gray-400 hover:text-white">Logout</a>
+        {% else %}
+           <a href="/login" class="text-gray-300 hover:text-white font-medium">Login</a>
+        {% endif %}
+      </div>
+    </div>
+  </header>
+  <main class="flex-grow pt-20">
+    {% block content %}{% endblock %}
+  </main>
+  <footer class="bg-slate-900 border-t border-slate-800 mt-auto py-10">
+    <div class="container mx-auto px-6 flex flex-col md:flex-row justify-between items-center">
+      <div class="mb-6 md:mb-0">
+        <p class="font-bold text-white mb-2">Connect with Genius Machado</p>
+        <div class="flex gap-6 text-2xl">
+          <a href="https://x.com/DRxICT" class="text-gray-400 hover:text-blue-400 transition"><i class="fab fa-twitter"></i></a>
+          <a href="https://www.youtube.com/@GeniusMachado" class="text-gray-400 hover:text-red-500 transition"><i class="fab fa-youtube"></i></a>
+          <a href="https://www.instagram.com/geniusmachado/" class="text-gray-400 hover:text-pink-500 transition"><i class="fab fa-instagram"></i></a>
+          <a href="https://www.snapchat.com/add/geniusmachado?share_id=clvFLRAE1h0&locale=en-US" class="text-gray-400 hover:text-yellow-400 transition"><i class="fab fa-snapchat"></i></a>
+        </div>
+      </div>
+      <div class="text-right text-sm text-gray-500">
+        <p>© 2025 Genius Machado Algo Systems.</p>
+        <p>Built for Tradovate Prop Accounts.</p>
+      </div>
+    </div>
+  </footer>
+</body>
+</html>

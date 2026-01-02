@@ -1,0 +1,73 @@
+version: '3.8'
+services:
+  db:
+    image: mysql:8.0
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpass
+      MYSQL_DATABASE: genius
+      MYSQL_USER: genius
+      MYSQL_PASSWORD: geniuspass
+    volumes:
+      - db_data:/var/lib/mysql
+    ports:
+      - "3306:3306"
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      timeout: 20s
+      retries: 10
+
+  auth:
+    build: ./auth-service
+    restart: on-failure
+    environment:
+      DATABASE_URL: mysql+aiomysql://genius:geniuspass@db:3306/genius
+      JWT_SECRET: supersecret_jwt_change_me
+    volumes:
+      - ./auth-service:/app
+    depends_on:
+      db:
+        condition: service_healthy
+    ports:
+      - "8001:8001"
+
+  api-gateway:
+    build: ./api-gateway
+    restart: on-failure
+    environment:
+      GATEWAY_HOST: api-gateway
+      AUTH_URL: http://auth:8001
+      STRATEGY_URL: http://strategy-engine:8002
+      JWT_SECRET: supersecret_jwt_change_me
+    volumes:
+      - ./api-gateway:/app
+      - ./frontend:/app/frontend:ro
+    depends_on:
+      - auth
+      - strategy-engine
+    ports:
+      - "8000:8000"
+
+  strategy-engine:
+    build: ./strategy-engine
+    volumes:
+      - ./strategy-engine:/app
+    environment:
+      DATABASE_URL: mysql+aiomysql://genius:geniuspass@db:3306/genius
+      TRADOVATE_ENV: "paper" 
+    depends_on:
+      db:
+        condition: service_healthy
+    ports:
+      - "8002:8002"
+
+  tunnel:
+    image: cloudflare/cloudflared:latest
+    restart: always
+    command: tunnel run
+    environment:
+      - TUNNEL_TOKEN=Paste_The_Docker_CLoudflare_tunnel_Token_HERE
+    depends_on:
+      - api-gateway
+
+volumes:
+  db_data:
